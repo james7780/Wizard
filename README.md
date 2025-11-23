@@ -6,6 +6,8 @@ Wizard of WASD for Atari Lynx
 
 !\[Screenshot of a Wizard of WASD for Atari Lynx.](wizard-0000.png)
 
+<img src="wizard-0000.png" />
+
 The full game is playable until the end, but needs some polishing.
 
 
