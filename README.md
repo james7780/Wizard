@@ -1,6 +1,6 @@
-# Wizard
+# Wizard of WASD (Atari Lynx)
 
-Wizard of WASD for Atari Lynx
+Wizard of WASD for Atari Lynx, written in C and compiled with llvm-mos.
 
 
 
