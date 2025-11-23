@@ -10,6 +10,10 @@ The full game is playable until the end, but needs some polishing.
 
 
 
+It is a very simple adventure/puzzle game.
+
+
+
 The game is based on the original 10-Line BASIC game by Randy Gill, for Atari 8-bit. Info can be found here:
 https://angrydill.com/wasd/
 
