@@ -1,0 +1,43 @@
+Wizard of WASD objects
+Grass
+Tree
+Water
+Mountain
+Dungeon entrance
+Dungeon exit
+Portal (warp hole)
+
+Pickup items:
+Cage
+Falcon / Bird in cage   (requires cage)
+Necklace w cross  (removes skull)
+Spade		(removes rock from entrance)
+Hammer / axe
+Unlit torch
+Lit torch    (lit from fire)
+Dagger of Venn
+
+Obstructions:
+Snake		(removed using caged falcon)
+Fire		(removed using unlit torch)
+Rock in entrance (removed using spade)
+Web             (removed using lit torch)
+Urn             (removed using hammer)
+Skull           (removed using necklace)
+Wizard		(killed with Dagger of Venn)
+
+Hints and screenshot page:
+https://angrydill.com/wasd/hints.html
+
+
+Functionality needed:
+1. Draw map:
+	- Draw n rows of n tiles from tilemap
+2. Move player
+3. Match player inventory item with current tile type
+	- Replace current tile with another, if condition met
+	- "Tile data" system: Tile id, action object id, replacement tile id
+4. "Jump" tiles: Move to specific x/y in tilemap
+	- Add "jump target" to tile data system
+
+ 
