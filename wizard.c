@@ -3,18 +3,12 @@
 // JH 2025
 #include <stdint.h>
 #include <stddef.h>
-//#include <stdio.h>
-//#include <string.h>
-//#include <lynx.h>
-//#include <_mikey.h>
-//#include <_suzy.h>
 #include "lynxlib.h"
 #include "drawtext.h"
 #include "audio.h"
 #include "instruments.h"
 
 #include "wizard.pal"			// main game pal
-
 
 // Sprite data
 #include "gfx/playerSpr.h"
@@ -47,10 +41,12 @@
 #include "gfx/cagedFalconSpr.h"
 #include "gfx/torchSpr.h"
 #include "gfx/rampartSpr.h"
-
 #include "gfx/logoSpr.h"
+#include "gfx/titleSpr.h"
 
 #include "worldtilemap.h"			// 32 x 96 tilemap
+
+//#define DEBUG
 
 extern void *memset(void *ptr, int value, size_t num);
 
@@ -73,8 +69,9 @@ const char *tileSprPtrs[] = { waterSpr, landSpr, forestSpr, mountainSpr, entranc
 // 	         - Replace current tile with another, if condition met
 // 	         - "Tile data" system: Tile id, action object id, replacement tile id
 // 4. [DONE] "Jump" tiles: Move to specific x/y in tilemap
-// 5. AUDIO - "No" or "Wrong" sound (low tone)
-// 6. [DONE] Intro screen + text
+// 5. [DONE] AUDIO - "No" or "Wrong" sound (low tone)
+// 6. [DONE] Intro story text
+// 7. [DONE] Title screen
 
 // Object ID's (tilemap value)
 enum ObjectID { WATER = 0, LAND, FOREST, MOUNTAIN, ENT1, ENT2, BLOCKENT, PORTAL, SHIP, WALL, FLOOR, STAIR, BRIDGE, RAMPART, 
@@ -141,6 +138,9 @@ unsigned char inventory[MAX_OBJECTID];
 //                                       Dung1   Exit    Portal  Portal  D3E1    Exit    D3E2    Exit    Dung2   Exit    Tunnel          D2J1            D2J2            D2J3            D2J4            Tower           TowerL1         Wizard
 unsigned int jumpStartPos[NUM_JUMPS] = { 0x00E6, 0x0631, 0x00AD, 0x02EE, 0x0110, 0x08C5, 0x0153, 0x09D9, 0x026B, 0x04D8, 0x0352, 0x0354, 0x0550, 0x04DA, 0x04D2, 0x0556, 0x04D4, 0x055E, 0x04DC, 0x0558, 0x0253, 0x0807, 0x0747, 0x06A7, 0x0607 };
 unsigned int jumpEndPos[NUM_JUMPS] = {   0x0631, 0x00E6, 0x02EE, 0x00AD, 0x08C5, 0x0110, 0x09D9, 0x0153, 0x04D8, 0x026B, 0x0354, 0x0352, 0x04DA, 0x0550, 0x0556, 0x04D2, 0x055E, 0x04D4, 0x0558, 0x04DC, 0x0807, 0x0253, 0x06A7, 0x0747, 0x0567 };
+
+// Tile index of blue wizard
+const unsigned int BLUEWIZARDPOS = 0x04E7;
 
 // These MUST be defined for LynxLib to work
 unsigned char *BUFFER1 = (unsigned char *)0x9000;			// C038;
@@ -319,12 +319,21 @@ struct SCB logoSCB =	{	BPP_4 | TYPE_BACKGROUND, //TYPE_BACKGROUND,
 							{ 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef },
 							0 };
 
+struct SCB titleSCB =	{	BPP_4 | TYPE_BACKGROUND, //TYPE_BACKGROUND,
+							REHV | LITERAL,			// scale XY
+							0x00,			// 0 to clear coll buffer 
+							0, titleSpr,
+							0, 0, 0x100, 0x100,
+							{ 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef },
+							0 };
+
 /// Set up for a new game							
 void InitGame()
 {
 	playerMapPos = 0x0226;
 	moveCount = 999;
 	memset((void *)inventory, 0, sizeof(inventory));
+	worldtilemap[BLUEWIZARDPOS] = WIZARD;
 }							
 
 // Move the ship as necessary
@@ -447,17 +456,23 @@ void Redraw()
 	DrawInventory();
 	DrawSprites(&playerSCB);
 
-	// TextDrawString("WIZARD\0", 120, 2);
-	// TextDrawString("  OF  \0", 120, 12);
-	// TextDrawString(" WAZD\0", 120, 22);
-
-	// DEBUG
+#ifdef DEBUG
 	TextDrawHex(playerMapPos, 120, 50);
+#endif
 
 	TextDrawString("T:\0", 120, 60);	
 	TextDrawInt(moveCount, 132, 60);
 
 	SwapBuffers();
+}
+
+// Show the title
+void DoTitle()
+{
+	SwapBuffers();
+	DrawSprites(&titleSCB);
+	SwapBuffers();
+	WaitKey();
 }
 
 // Show the intro text
@@ -552,26 +567,29 @@ int main()
 	TextInit();									// Set up text renderer
 
 	// Show story text
+	DoTitle();
+	// Show story text
 	DoIntro();
-
 	// Setup for a new game
 	InitGame();
 
-// DEBUG
-//inventory[SPADE] = 1;
-//inventory[HAMMER] = 1;
-//inventory[CAGE] = 1;
+#ifdef DEBUG
+inventory[SPADE] = 1;
+inventory[HAMMER] = 1;
+inventory[CAGE] = 1;
+inventory[CROSS] = 1;
+inventory[DAGGER] = 1;
+#endif
 
 	Redraw();
 
-	const unsigned int blueWizPos = 0x04E7;
 	while(moveCount > 0)
 		{
 		Redraw();
 		MovePlayer();
 
 		// Is Blue Wizard dead?
-		if (worldtilemap[blueWizPos] != WIZARD)
+		if (worldtilemap[BLUEWIZARDPOS] != WIZARD)
 			break;
 		}
 

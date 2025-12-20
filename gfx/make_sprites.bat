@@ -41,11 +41,10 @@ rem Logo sprite
 sprpck -s4 -t6 -u -p0 -h -o000052 -S040027 -a000000 spritesheet.bmp logoSpr.h
 
 
-
 rem copy /B pf0.h + pf1.h + pf2.h + pf3.h + pf4.h pfArray.h
 
 rem Title sprite
-rem sprpck -s4 -t6 -u -o007014 -S086028 -a000000 title.bmp title.h
+sprpck -s4 -t6 -u -p0 -h -o064040 -S160102 -a000000 spritesheet.bmp titleSpr.h
 
 rem Clean up
 del *.pal
