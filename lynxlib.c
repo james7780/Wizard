@@ -150,21 +150,24 @@ void DrawSprites(struct SCB *firstSprite)
 }
 
 // NEW (relacement for old lib)
+volatile unsigned char currentRenderBufferIndex = 0;
 void SwapBuffers()
 {
 	WaitVSync();
 
-	if (MIKEY.scrbase == BUFFER1)
+	if (0 == currentRenderBufferIndex)
 		{
 		MIKEY.scrbase = BUFFER2;
 		//SUZY.vidadr = BUFFER1;
 		SUZY.sprbase = BUFFER1;
+		currentRenderBufferIndex = 1;
 		}
 	else
 		{
 		MIKEY.scrbase = BUFFER1;
 		//SUZY.vidadr = BUFFER2;
 		SUZY.sprbase = BUFFER2;
+		currentRenderBufferIndex = 0;
 		}	
 
 /* WAS	
